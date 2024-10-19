@@ -7,7 +7,7 @@ if INimg is None:
     print("圖像讀取失敗，請確認檔案路徑是否正確。")
 else:
     print("圖像成功讀取！")
-
+trainCount = 0
 # 將圖像進行縮放
 INimg = cv2.resize(INimg, (0, 0), fx=0.2, fy=0.2)
 showPosimg = INimg.copy()
@@ -17,9 +17,10 @@ def main():
         h = Timg.shape[0]  # 圖像高度
         Wsize = w // num  # 每個區塊的寬度
         Hsize = h // num  # 每個區塊的高度
-        
+
         for i in range(0, w, Wsize):
             for j in range(0, h, Hsize):
+                
                 if (i // Wsize + j // Hsize) % 2 == 0:
                     Timg[j:j+Hsize, i:i+Wsize] = [255, 255, 255]  # 白色區塊
                 else:
@@ -73,7 +74,6 @@ def main():
     cv2.createTrackbar('CannyA', 'trackbar', 50, 500, TrackUpdate)
     cv2.createTrackbar('CannyB', 'trackbar', 50, 500, TrackUpdate)
     cv2.createTrackbar('subdivs', 'trackbar', 5, 50, TrackUpdate)
-    # 等待用戶按下 'r' 鍵來退出
     while True:
         key = cv2.waitKey(0) & 0xFF
         if key == ord('j'):  
@@ -100,6 +100,38 @@ def main():
         key = cv2.waitKey(0) & 0xFF
         if key == ord('j'):  
             break
-    cv2.destroyAllWindows()
+    if len(PoinPos) == 0:
+        main()
+    RavgColor, GavgColor, BavgColor = 0, 0, 0
+    userlist = []
+    def inlist(event, x, y, flags, param):
+        # 判斷滑鼠事件是否是點擊左鍵
+        if event == cv2.EVENT_LBUTTONDOWN:
+            cv2.destroyWindow("num" + str(i))
+    print(PoinPos)
+    print(INimg.shape)
+    for j in range(len(PoinPos)):
+        x, y = PoinPos[j]
+        print(INimg[x][y])
+        RavgColor += INimg[x][y][2]
+        GavgColor += INimg[x][y][1]
+        BavgColor += INimg[x][y][0]
+    RavgColor /= len(PoinPos)
+    GavgColor /= len(PoinPos)
+    BavgColor /= len(PoinPos)
+
+    while len(userlist)<=17:
+        Chromosomes = []
+        AiImg = []
+        for i in range(20):
+            Chromosomes.append()
+            AiImg.append()
+            cv2.imshow("num"+str(i), AiImg[i])
+            cv2.setMouseCallback("getpos", inlist(i))
+    while True:
+        key = cv2.waitKey(0) & 0xFF
+        if key == ord('j'):  
+            break
     main()
+    
 main()
